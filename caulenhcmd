@@ -1,0 +1,9 @@
+$word = New-Object -ComObject Word.Application
+$word.Visible = $false
+Get-ChildItem -Filter *.doc* | ForEach-Object {
+    $doc = $word.Documents.Open($_.FullName)
+    $pdf = [System.IO.Path]::ChangeExtension($_.FullName, '.pdf')
+    $doc.SaveAs([ref] $pdf, [ref] 17)
+    $doc.Close()
+}
+$word.Quit()
