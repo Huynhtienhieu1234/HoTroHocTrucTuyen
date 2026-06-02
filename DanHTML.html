@@ -252,8 +252,9 @@
             </div>
 
             <div class="form-group">
-                <label>Phòng học Google Meet</label>
-                <input id="phongHoc" value="https://meet.google.com/tzb-ixdv-tuh" readonly style="background: #f3f4f6;">
+                <label>Phòng học Google Meet / Link</label>
+                <input id="phongHoc" placeholder="https://meet.google.com/..." value="https://meet.google.com/tzb-ixdv-tuh">
+                <div class="hint">Nhập đầy đủ URL Google Meet để xuất đúng link.</div>
             </div>
 
             <div class="action-row">
@@ -314,7 +315,14 @@
                 document.getElementById("tenHocPhan").value = getCell("Tên học phần");
                 document.getElementById("giangVien").value = getCell("Giảng viên");
                 document.getElementById("thoiGianHoc").value = "[Từ ngày... đến ngày...]";
-                document.getElementById("phongHoc").value = "https://meet.google.com/tzb-ixdv-tuh";
+
+                let meetLink = Array.from(doc.querySelectorAll("a[href]")).map(a => a.href).find(h => h.includes("meet.google.com"));
+                if (!meetLink) {
+                    const plainText = doc.body.textContent || "";
+                    const match = plainText.match(/https:\/\/meet\.google\.com\/[\w\-\/]+/);
+                    if (match) meetLink = match[0];
+                }
+                document.getElementById("phongHoc").value = meetLink || "https://meet.google.com/tzb-ixdv-tuh";
 
                 // Phần mô tả khóa học (giữ nguyên logic cũ)
                 const moTaTd = Array.from(doc.querySelectorAll("td[colspan='2']")).find(td =>
@@ -441,7 +449,7 @@
     <table class="custom-table">
         <tbody>
             <tr><th class="custom-th" colspan="2">🗓️ Lịch học và thông báo</th></tr>
-            <tr><td class="custom-td" colspan="2">🎧 <strong>Phòng học:</strong>&nbsp;${escapeHtml(v("phongHoc"))}</td></tr>
+            <tr><td class="custom-td" colspan="2">🎧 <strong>Phòng học:</strong>&nbsp;<a href="${escapeHtml(v("phongHoc"))}" target="_blank">${escapeHtml(v("phongHoc"))}</a></td></tr>
         </tbody>
     </table>
 </div>`;
